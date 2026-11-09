@@ -83,15 +83,101 @@
     #toast {
       transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
     }
+
+    /* Header sits beside the phone so both fit the window.
+       The phone stays at its real size unless the screen is too short. */
+    :root {
+      --device-w: 393px;
+      --device-h: 852px;
+      --stage-pad: 16px;
+    }
+
+    .stage {
+      box-sizing: border-box;
+      height: 100dvh;
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      gap: 32px;
+      padding: var(--stage-pad) 28px;
+      overflow: hidden;
+    }
+
+    .side-col {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 14px;
+      width: 300px;
+      flex: 0 0 300px;
+      max-height: calc(100dvh - (var(--stage-pad) * 2));
+      overflow: auto;
+    }
+
+    .device-slot {
+      --fit: min(1, calc((100dvh - (var(--stage-pad) * 2)) / var(--device-h)));
+      width: calc(var(--device-w) * var(--fit));
+      height: calc(var(--device-h) * var(--fit));
+      position: relative;
+      flex: 0 0 auto;
+    }
+
+    .device-frame {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: var(--device-w);
+      height: var(--device-h);
+      box-sizing: border-box;
+      transform: scale(var(--fit));
+      transform-origin: top left;
+    }
+
+    .proto-nav-btn {
+      width: 100%;
+      justify-content: flex-start;
+    }
+
+    @media (max-width: 960px) {
+      .stage {
+        flex-direction: column;
+        height: auto;
+        min-height: 100dvh;
+        overflow: auto;
+        justify-content: flex-start;
+        gap: 16px;
+        padding: 12px;
+      }
+      .side-col {
+        width: min(720px, 100%);
+        flex: none;
+        max-height: none;
+      }
+      .nav-pills {
+        flex-direction: row;
+        overflow-x: auto;
+      }
+      .proto-nav-btn {
+        width: auto;
+        justify-content: center;
+      }
+      .device-slot {
+        --fit: min(1, calc((100dvh - 200px) / var(--device-h)), calc((100vw - 24px) / var(--device-w)));
+      }
+    }
   </style>
 </head>
-<body class="bg-[#05080E] text-slate-100 min-h-screen font-sans flex flex-col items-center justify-start p-2 sm:p-6 lg:p-8 antialiased selection:bg-amber-500 selection:text-black">
-<!-- Desktop Prototyping Top Toolbar -->
-<header class="w-full max-w-5xl mb-4 sm:mb-6 flex flex-col md:flex-row items-center justify-between gap-3 bg-[#0E1522]/90 backdrop-blur border border-[#1E293B] rounded-2xl p-4 shadow-2xl">
-<div class="flex items-center gap-3 w-full md:w-auto">
+<body class="bg-[#05080E] text-slate-100 font-sans antialiased selection:bg-amber-500 selection:text-black">
+<div class="stage">
+<div class="side-col">
+<!-- Desktop Prototyping Toolbar -->
+<header class="w-full flex flex-col items-stretch gap-3 bg-[#0E1522]/90 backdrop-blur border border-[#1E293B] rounded-2xl p-4 shadow-2xl">
+<div class="flex items-start gap-3 w-full">
 <img alt="Whittaker Trading Ltd" class="w-10 h-10 object-contain rounded-full shadow-lg shadow-amber-500/20 bg-amber-500/10 p-0.5 border border-amber-500/40" src="https://lh3.googleusercontent.com/aida/ALJJyrDEST1LJ3HTD3q9y1s5Jmw85CWWmW3alLZVQoxM36y5cpH3nNyJH46r8DEB5UUMYVqvX3ityvIoF6U5qdvgu_P46TwKcreWOZLLHohYG3Q7my4wJ5Lov0ZkwVh2xGCTGTozWQ-yT9gl5Do22x5itO8t0aXjd_ji76Y86RO59vE9XdL0chdgZlMzSY9qK-ydUqCoh_PKxwBrv6RWrI4bZ6-4hVaLDf4H345q1hQkE1Z3"/>
 <div>
-<div class="flex items-center gap-2">
+<div class="flex flex-wrap items-center gap-2">
 <h1 class="text-sm sm:text-base font-bold text-white tracking-tight">Whittaker Trading Ltd</h1>
 <span class="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-amber-500/20 text-amber-400 border border-amber-500/30">Interactive Prototype</span>
 </div>
@@ -99,26 +185,32 @@
 </div>
 </div>
 <!-- Screen Switcher Pills -->
-<div class="flex items-center gap-1.5 overflow-x-auto w-full md:w-auto no-scrollbar p-1 bg-black/40 rounded-xl border border-slate-800">
-<button class="proto-nav-btn text-xs font-semibold px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 bg-amber-500 text-black shadow" data-nav-btn="home" onclick="navTo('home')">
+<div class="nav-pills flex flex-col gap-1.5 w-full no-scrollbar p-1 bg-black/40 rounded-xl border border-slate-800">
+<button class="proto-nav-btn text-xs font-semibold px-3 py-2 rounded-lg transition-all flex items-center gap-1.5 bg-amber-500 text-black shadow" data-nav-btn="home" onclick="navTo('home')">
 <i class="fa-solid fa-house text-[11px]"></i> Home
       </button>
-<button class="proto-nav-btn text-xs font-semibold px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 text-slate-400 hover:text-white" data-nav-btn="scanner" onclick="navTo('scanner')">
+<button class="proto-nav-btn text-xs font-semibold px-3 py-2 rounded-lg transition-all flex items-center gap-1.5 text-slate-400 hover:text-white" data-nav-btn="scanner" onclick="navTo('scanner')">
 <i class="fa-solid fa-barcode text-[11px]"></i> Scanner
       </button>
-<button class="proto-nav-btn text-xs font-semibold px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 text-slate-400 hover:text-white" data-nav-btn="pdp" onclick="navTo('pdp')">
+<button class="proto-nav-btn text-xs font-semibold px-3 py-2 rounded-lg transition-all flex items-center gap-1.5 text-slate-400 hover:text-white" data-nav-btn="pdp" onclick="navTo('pdp')">
 <i class="fa-solid fa-box-open text-[11px]"></i> PDP
       </button>
-<button class="proto-nav-btn text-xs font-semibold px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 text-slate-400 hover:text-white" data-nav-btn="hub" onclick="navTo('hub')">
+<button class="proto-nav-btn text-xs font-semibold px-3 py-2 rounded-lg transition-all flex items-center gap-1.5 text-slate-400 hover:text-white" data-nav-btn="hub" onclick="navTo('hub')">
 <i class="fa-solid fa-helmet-safety text-[11px]"></i> Hub
       </button>
-<button class="proto-nav-btn text-xs font-semibold px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 text-slate-400 hover:text-white" data-nav-btn="checkout" onclick="navTo('checkout')">
+<button class="proto-nav-btn text-xs font-semibold px-3 py-2 rounded-lg transition-all flex items-center gap-1.5 text-slate-400 hover:text-white" data-nav-btn="checkout" onclick="navTo('checkout')">
 <i class="fa-solid fa-credit-card text-[11px]"></i> Checkout
       </button>
 </div>
 </header>
+<footer class="text-left text-xs text-slate-500 space-y-1 px-1">
+<p>Whittaker Trading Ltd • Isle of Man DeWalt &amp; Makita Authorized Trade Hub</p>
+<p class="font-mono text-[11px] text-slate-600">Simulates route navigation, quantity adjustments, 1-tap ordering, dual VAT toggling &amp; torch activation.</p>
+</footer>
+</div>
 <!-- Interactive Device Mockup (iPhone 16 Pro, 393 x 852 pt) -->
-<div class="relative w-[393px] h-[852px] max-w-full bg-[#0B0F17] border-[9px] border-[#1F2937] rounded-[52px] shadow-[0_25px_70px_rgba(0,0,0,0.85),0_0_0_1px_rgba(255,255,255,0.08)] overflow-hidden flex flex-col select-none ring-1 ring-black">
+<div class="device-slot">
+<div class="device-frame bg-[#0B0F17] border-[9px] border-[#1F2937] rounded-[52px] shadow-[0_25px_70px_rgba(0,0,0,0.85),0_0_0_1px_rgba(255,255,255,0.08)] overflow-hidden flex flex-col select-none ring-1 ring-black">
 <!-- Native iOS Dynamic Island & Status Bar -->
 <div class="relative z-50 w-full pt-3 px-6 pb-1 flex justify-between items-center bg-[#0B0F17]/95 backdrop-blur-md text-white text-xs select-none">
 <span class="font-semibold text-xs tracking-tight font-mono" id="live-time">09:41</span>
@@ -959,11 +1051,8 @@
 <button class="text-slate-400 hover:text-white text-xs ml-2" onclick="hideToast()">✕</button>
 </div>
 </div>
-<!-- Interactive Demo Controls & Guide -->
-<footer class="w-full max-w-5xl mt-6 text-center text-xs text-slate-500 space-y-1">
-<p>Whittaker Trading Ltd • Isle of Man DeWalt &amp; Makita Authorized Trade Hub</p>
-<p class="font-mono text-[11px] text-slate-600">Simulates route navigation, quantity adjustments, 1-tap ordering, dual VAT toggling &amp; torch activation.</p>
-</footer>
+</div>
+</div>
 <script>
     // State Management
     let currentView = 'home';
@@ -1019,9 +1108,9 @@
       document.querySelectorAll('.proto-nav-btn').forEach(btn => {
         const target = btn.getAttribute('data-nav-btn');
         if (target === viewName) {
-          btn.className = 'proto-nav-btn text-xs font-semibold px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 bg-amber-500 text-black shadow';
+          btn.className = 'proto-nav-btn text-xs font-semibold px-3 py-2 rounded-lg transition-all flex items-center gap-1.5 bg-amber-500 text-black shadow';
         } else {
-          btn.className = 'proto-nav-btn text-xs font-semibold px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 text-slate-400 hover:text-white';
+          btn.className = 'proto-nav-btn text-xs font-semibold px-3 py-2 rounded-lg transition-all flex items-center gap-1.5 text-slate-400 hover:text-white';
         }
       });
 
